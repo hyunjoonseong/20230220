@@ -8,7 +8,7 @@ public class A20230220 : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });//Enhanced모듈 추가
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

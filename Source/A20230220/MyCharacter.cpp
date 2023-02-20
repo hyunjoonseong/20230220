@@ -5,6 +5,11 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "EnhancedInputComponent.h"
+#include "EnhancedInputSubSystems.h"
+#include "Kismet/GameplayStatics.h" //유틸리티 관련 헤더
+#include "Kismet/KismetMathLibrary.h"  //수학 관련 헤더
+
 
 // Sets default values
 AMyCharacter::AMyCharacter()
@@ -29,6 +34,18 @@ void AMyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	APlayerController * PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	if (PC)
+	{
+		UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem< UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
+		PC->GetLocalPlayer();
+		if (Subsystem)
+		{
+			Subsystem->AddMappingContext(InputContext, 0);
+		}
+		
+	}
+	
 }
 
 // Called every frame
@@ -43,5 +60,37 @@ void AMyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	UEnhancedInputComponent* EIC = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
+		if (EIC)
+		{
+			EIC->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+			EIC->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
+
+			EIC->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMyCharacter::Move);
+			EIC->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMyCharacter::Look);
+		}
+
+}
+
+void AMyCharacter::Move(const FInputActionValue& Value)
+{
+	FVector2D MoveVector = Value.Get<FVector2D>();
+	
+	FRotator ForwardRotation = FRotator(0, GetControlRotation().Yaw, 0);
+	FVector FowardVector = UKismetMathLibrary::GetForwardVector(ForwardRotation);
+
+	FRotator RightRotation = FRotator(0, GetControlRotation().Yaw, GetControlRotation().Roll);
+	FVector RightVector = UKismetMathLibrary::GetRightVector(RightRotation);
+
+	AddMovementInput(FowardVector, MoveVector.Y);
+	AddMovementInput(RightVector, MoveVector.X);
+
+}
+
+void AMyCharacter::Look(const FInputActionValue& Value)
+{
+	FVector2D LookVector = Value.Get<FVector2D>();
+	AddControllerPitchInput(LookVector.Y);
+	AddControllerYawInput(LookVector.X);
 }
 

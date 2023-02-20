@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "InputAction.h"
 #include "MyCharacter.generated.h"
 
 
@@ -30,13 +31,32 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Data", BlueprintReadWrite)
 		USpringArmComponent* CameraBoom;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere, Category = "Data", BlueprintReadWrite)
 		UCameraComponent* FollowCamera;
+	
+	UPROPERTY(EditAnywhere, Category = "Data", BlueprintReadWrite)
+
+	class UInputMappingContext* InputContext;
+
+	UPROPERTY(EditAnywhere, Category = "Data", BlueprintReadWrite)
+
+		class UInputAction* JumpAction;
+
+	UPROPERTY(EditAnywhere, Category = "Data", BlueprintReadWrite)
+
+		class UInputAction* MoveAction;
+
+	UPROPERTY(EditAnywhere, Category = "Data", BlueprintReadWrite)
+
+		class UInputAction* LookAction;
 
 
+
+	    void Move(const FInputActionValue& Value);
+		void Look(const FInputActionValue& Value); //포인터 아닌건 전방선언이 안됨.
 
 
 };
